@@ -1,5 +1,4 @@
 import {useState, useEffect} from 'react'
-import type { NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
 import { useTheme } from "next-themes";
@@ -8,7 +7,7 @@ import { BsFillSunFill, BsFillMoonStarsFill, BsArrowLeftCircle } from "react-ico
 
 const defaultEndpoint = "https://rickandmortyapi.com/api/character";
 
-export async function getServerSideProps({ query }: {query: any}) {
+export async function getServerSideProps({ query }) {
   const { id } = query;
   const res = await fetch(`${defaultEndpoint}/${id}`);
   const data = await res.json();
@@ -19,7 +18,7 @@ export async function getServerSideProps({ query }: {query: any}) {
     }, // will be passed to the page component as props
   };
 }
-const Character: NextPage = ({ data }: {data: any}) => {
+const Character = ({ data }) => {
   const { name, image, gender, location, origin, species, status } = data;
   
 
@@ -51,7 +50,7 @@ const Character: NextPage = ({ data }: {data: any}) => {
       </button>
 
       <Link href='/'>
-      <BsArrowLeftCircle className='float-left  ml-20 mt-10 transition ease-in-out delay-150 hover:-translate-x-1 hover:scale-110  duration-300' size={34} />
+      <BsArrowLeftCircle className='float-left cursor-pointer ml-20 mt-10 transition ease-in-out delay-150 hover:-translate-x-1 hover:scale-110  duration-300' size={34} />
       </Link>
 
       <main className=" mt-40 text-center ">
