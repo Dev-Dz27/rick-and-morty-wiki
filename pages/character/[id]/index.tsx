@@ -19,7 +19,7 @@ export async function getServerSideProps({ query }: {query: any}) {
     }, // will be passed to the page component as props
   };
 }
-const Character: NextPage = ({ data }) => {
+const Character: NextPage = ({ data }: {data: any}) => {
   const { name, image, gender, location, origin, species, status } = data;
   
 
