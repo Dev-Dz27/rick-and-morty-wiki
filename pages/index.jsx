@@ -1,4 +1,3 @@
-import type { NextPage } from "next";
 import { useState, useEffect } from "react";
 import Head from "next/head";
 import Link from "next/link";
@@ -19,7 +18,7 @@ export async function getServerSideProps() {
     }, // will be passed to the page component as props
   };
 }
-const Home: NextPage = ({ data }) => {
+const Home = ({ data }) => {
   const { info, results: defaultResults = [] } = data;
   const [results, updateResults] = useState(defaultResults);
   const [page, updatePage] = useState({
