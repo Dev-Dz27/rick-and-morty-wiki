@@ -8,7 +8,7 @@ import { BsFillSunFill, BsFillMoonStarsFill, BsArrowLeftCircle } from "react-ico
 
 const defaultEndpoint = "https://rickandmortyapi.com/api/character";
 
-export async function getServerSideProps({ query }) {
+export async function getServerSideProps({ query }: {query: any}) {
   const { id } = query;
   const res = await fetch(`${defaultEndpoint}/${id}`);
   const data = await res.json();
