@@ -1,86 +1,169 @@
-import type { NextPage } from 'next'
-import Head from 'next/head'
-import Image from 'next/image'
+import type { NextPage } from "next";
+import { useState, useEffect } from "react";
+import Head from "next/head";
+import Link from "next/link";
+import { useTheme } from "next-themes";
+import { BsFillSunFill, BsFillMoonStarsFill } from "react-icons/bs";
 
-const Home: NextPage = () => {
+
+
+const defaultEndpoint = "https://rickandmortyapi.com/api/character";
+
+export async function getServerSideProps() {
+  const res = await fetch(defaultEndpoint);
+  const data = await res.json();
+
+  return {
+    props: {
+      data,
+    }, // will be passed to the page component as props
+  };
+}
+const Home: NextPage = ({ data }) => {
+  const { info, results: defaultResults = [] } = data;
+  const [results, updateResults] = useState(defaultResults);
+  const [page, updatePage] = useState({
+    ...info,
+    current: defaultEndpoint,
+  });
+
+  const { current } = page;
+
+  useEffect(() => {
+    if (current === defaultEndpoint) return;
+
+    async function request() {
+      const res = await fetch(current);
+      const nextData = await res.json();
+
+      updatePage({
+        current,
+        ...nextData.info,
+      });
+
+      if (!nextData.info?.prev) {
+        updateResults(nextData.results);
+        return;
+      }
+
+      updateResults((prev) => {
+        return [...prev, ...nextData.results];
+      });
+    }
+
+    request();
+  }, [current]);
+
+  function handleLoadMore() {
+    updatePage((prev) => {
+      return {
+        ...prev,
+        current: page?.next,
+      };
+    });
+  }
+
+  function handleOnSubmitSearch(e) {
+    e.preventDefault();
+
+    const { currentTarget = {} } = e;
+    const fields = Array.from(currentTarget?.elements);
+    const fieldQuery = fields.find((field) => field.name === "query");
+
+    const value = fieldQuery.value || "";
+    const endpoint = `https://rickandmortyapi.com/api/character/?name=${value}`;
+
+    updatePage({
+      current: endpoint,
+    });
+  }
+
+  // Dark Mode
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+  if (!mounted) return null;
+
+
+  console.log(data);
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center py-2">
+    <div className=" min-h-screen flex-col items-center justify-center py-2">
       <Head>
-        <title>Create Next App</title>
+        <title>Wubba Lubba Dub dub!</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className="flex w-full flex-1 flex-col items-center justify-center px-20 text-center">
-        <h1 className="text-6xl font-bold">
-          Welcome to{' '}
-          <a className="text-blue-600" href="https://nextjs.org">
-            Next.js!
-          </a>
-        </h1>
+      <button
+        className="  flex mx-auto  mt-10 "
+        onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+      >
+        <span>
+          {theme === "light" ? (
+            <BsFillMoonStarsFill size={30} />
+          ) : (
+            <BsFillSunFill size={30} />
+          )}
+        </span>
+      </button>
 
-        <p className="mt-3 text-2xl">
-          Get started by editing{' '}
-          <code className="rounded-md bg-gray-100 p-3 font-mono text-lg">
-            pages/index.tsx
-          </code>
+      <main className=" mt-10 text-center ">
+        <h1 className="text-4xl font-bold "> Wubba Lubba Dub dub! </h1>
+        <p className="text-xl font-medium my-4">Rick and Morty Wiki</p>
+
+        <form onSubmit={handleOnSubmitSearch}>
+
+          <input
+            className="mr-2 text-2xl bg-slate-300 rounded-2xl py-1 px-4 "
+            type="search"
+            name="query"
+          />
+
+          <button className="text-2xl bg-blue-500 hover:bg-blue-700 text-white font-bold py-[.7rem] px-6 rounded-2xl">
+          <svg aria-hidden="true" className="w-5 h-5 text-gray-100 dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+          </button>
+        </form>
+
+        
+        <ul className="mx-14 mt-10 grid grid-cols-2 gap-4 lg:grid-cols-3 xl:grid-cols-4">
+          {
+          results ? 
+          results?.map((result) => {
+            const { id, name, image } = result;
+            return (
+              <li
+                key={id}
+                className=" rounded-lg shadow-lg  dark:bg-transparent max-w-sm  "
+              >
+                <Link href={`character/${id}`}>
+                  <a className="text-[2rem] font-medium"> {name} </a>
+                </Link>
+                <Link href={`character/${id}`}>
+                  <img className="cursor-pointer" src={image} alt={name} />
+                </Link>
+              </li>
+            );
+          }) : ( <div >
+            <h2 className="text-center ">No results found
+</h2>
+<p>
+Try different keywords or remove search filters
+</p>
+
+          </div> ) }
+        </ul>
+        <p>
+          <button
+            className="mt-8 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full transition ease-in-out delay-150  hover:-translate-y-1 hover:scale-110  duration-300"
+            onClick={handleLoadMore}
+          >
+            Load More
+          </button>
         </p>
-
-        <div className="mt-6 flex max-w-4xl flex-wrap items-center justify-around sm:w-full">
-          <a
-            href="https://nextjs.org/docs"
-            className="mt-6 w-96 rounded-xl border p-6 text-left hover:text-blue-600 focus:text-blue-600"
-          >
-            <h3 className="text-2xl font-bold">Documentation &rarr;</h3>
-            <p className="mt-4 text-xl">
-              Find in-depth information about Next.js features and its API.
-            </p>
-          </a>
-
-          <a
-            href="https://nextjs.org/learn"
-            className="mt-6 w-96 rounded-xl border p-6 text-left hover:text-blue-600 focus:text-blue-600"
-          >
-            <h3 className="text-2xl font-bold">Learn &rarr;</h3>
-            <p className="mt-4 text-xl">
-              Learn about Next.js in an interactive course with quizzes!
-            </p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/canary/examples"
-            className="mt-6 w-96 rounded-xl border p-6 text-left hover:text-blue-600 focus:text-blue-600"
-          >
-            <h3 className="text-2xl font-bold">Examples &rarr;</h3>
-            <p className="mt-4 text-xl">
-              Discover and deploy boilerplate example Next.js projects.
-            </p>
-          </a>
-
-          <a
-            href="https://vercel.com/import?filter=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className="mt-6 w-96 rounded-xl border p-6 text-left hover:text-blue-600 focus:text-blue-600"
-          >
-            <h3 className="text-2xl font-bold">Deploy &rarr;</h3>
-            <p className="mt-4 text-xl">
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
-        </div>
       </main>
-
-      <footer className="flex h-24 w-full items-center justify-center border-t">
-        <a
-          className="flex items-center justify-center gap-2"
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
-        </a>
-      </footer>
     </div>
-  )
-}
+  );
+};
 
-export default Home
+export default Home;
