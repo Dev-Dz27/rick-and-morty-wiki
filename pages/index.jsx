@@ -14,7 +14,7 @@ export async function getServerSideProps() {
   return {
     props: {
       data,
-    }, // will be passed to the page component as props
+    }, 
   };
 }
 const Home = ({ data }) => {
@@ -84,7 +84,6 @@ const Home = ({ data }) => {
   }, []);
   if (!mounted) return null;
 
-  console.log(data);
   return (
     <div className=" min-h-screen flex-col items-center justify-center py-2">
       <Head>
@@ -123,7 +122,6 @@ const Home = ({ data }) => {
             },
           }}
         >
-          <strong className="  text-4xl font-extrabold hover:text-red-700 hover transition ease-in-out delay-150  hover:-translate-y- hover:scale-110  duration-300">Chaima 💕</strong>
           
           <h1 className="mt-8 text-4xl font-bold "> Wubba Lubba Dub dub! </h1>
         </motion.div>
