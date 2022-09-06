@@ -123,7 +123,7 @@ const Home = ({ data }) => {
             },
           }}
         >
-          <strong className="  text-4xl font-extrabold hover:text-red-700 hover transition ease-in-out delay-150  hover:-translate-y-1 hover:scale-110  duration-300">Chaima 💕</strong>
+          <strong className="  text-4xl font-extrabold hover:text-red-700 hover transition ease-in-out delay-150  hover:-translate-y- hover:scale-110  duration-300">Chaima 💕</strong>
           
           <h1 className="mt-8 text-4xl font-bold "> Wubba Lubba Dub dub! </h1>
         </motion.div>
