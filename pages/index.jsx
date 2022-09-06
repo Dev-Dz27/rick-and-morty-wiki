@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import Head from "next/head";
 import Link from "next/link";
 import { useTheme } from "next-themes";
+import { motion } from "framer-motion";
 import { BsFillSunFill, BsFillMoonStarsFill } from "react-icons/bs";
 
 const defaultEndpoint = "https://rickandmortyapi.com/api/character";
@@ -105,12 +106,33 @@ const Home = ({ data }) => {
       </button>
 
       <main className=" mt-10 text-center ">
-        <h1 className="text-4xl font-bold "> Wubba Lubba Dub dub! </h1>
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={{
+            hidden: {
+              scale: 0.8,
+              opacity: 0,
+            },
+            visible: {
+              scale: 1,
+              opacity: 1,
+              transition: {
+                delay: 0.4,
+              },
+            },
+          }}
+        >
+          <strong className="  text-4xl font-extrabold hover:text-red-700 hover transition ease-in-out delay-150  hover:-translate-y-1 hover:scale-110  duration-300">Chaima 💕</strong>
+          
+          <h1 className="mt-8 text-4xl font-bold "> Wubba Lubba Dub dub! </h1>
+        </motion.div>
         <p className="text-xl font-medium my-4">Rick and Morty Wiki</p>
 
         <form onSubmit={handleOnSubmitSearch}>
-          <input
-            className="mr-2 text-2xl bg-slate-300 rounded-2xl py-1 px-4 "
+          <motion.input
+            whileFocus={{ scale: 1.2 }}
+            className="mr-10 text-2xl bg-slate-300 rounded-2xl py-1 px-4 "
             type="search"
             name="query"
           />
@@ -139,9 +161,24 @@ const Home = ({ data }) => {
             results?.map((result) => {
               const { id, name, image } = result;
               return (
-                <li
+                <motion.li
                   key={id}
-                  className=" rounded-lg shadow-lg  dark:bg-transparent max-w-sm  "
+                  className=" rounded-lg shadow-lg  dark:bg-transparent max-w-sm "
+                  whileHover={{
+                    position: "relative",
+                    zIndex: 1,
+                    scale: [1, 1.2, 1.1],
+                    rotate: [0, 10, -10, 0],
+                    filter: [
+                      "hue-rotate(0) contrast(100%)",
+                      "hue-rotate(360deg) contrast(200%)",
+                      "hue-rotate(45deg) contrast(300%)",
+                      "hue-rotate(0) contrast(100%)",
+                    ],
+                    transition: {
+                      duration: 0.2,
+                    },
+                  }}
                 >
                   <Link href={`character/${id}`}>
                     <a className="text-[2rem] font-medium"> {name} </a>
@@ -149,7 +186,7 @@ const Home = ({ data }) => {
                   <Link href={`character/${id}`}>
                     <img className="cursor-pointer" src={image} alt={name} />
                   </Link>
-                </li>
+                </motion.li>
               );
             })
           ) : (
