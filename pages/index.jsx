@@ -89,6 +89,7 @@ const Home = ({ data }) => {
       <Head>
         <title>Wubba Lubba Dub dub!</title>
         <link rel="icon" href="/favicon.ico" />
+    <meta name="google-site-verification" content="zNwtizC2UvJlyJIAGT_MJpvvwk1uXh9cZxUAGqSrXgU" />
       </Head>
 
       <button
